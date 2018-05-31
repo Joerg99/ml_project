@@ -32,7 +32,7 @@ loss_op= tf.reduce_mean(tf.square(hidden_layer_out - X))
 optimizer = tf.train.AdamOptimizer(learning_rate)
 
 train_op = optimizer.minimize(loss_op)
-
+# hihihi 
 batch_size= 2000
 x_train = make_data(n_input, batch_size)
 x_test = make_data(n_input, batch_size)
