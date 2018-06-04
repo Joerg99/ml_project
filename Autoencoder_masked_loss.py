@@ -3,7 +3,6 @@ import numpy as np
 import Data_handler
 import matplotlib.pyplot as plt
 
-
 n_input = n_output = 218
 n_hidden = 210
 n_hidden2 = 200
@@ -24,7 +23,10 @@ target_layer = dense_layer(layer_in, n_target_layer)
 #hidden_2 = dense_layer(target_layer, n_hidden)
 layer_out = dense_layer(target_layer, n_output)
 
-loss_op= tf.reduce_mean(tf.square(layer_out - X))
+########## tf.divide(tf.reduce_sum(tf.multiply(mask, tf.square(layer_out - X))), alle einsen in mask) 
+########## mask = batch_size x n_input
+#loss_op= tf.reduce_mean(tf.square(layer_out - X))
+loss_op = tf.divide(tf.reduce_sum(tf.multiply(3.0, tf.square(layer_out - X))),2) # 3.0 = mask und 2 = anzahl von 1 in mask
 optimizer = tf.train.AdamOptimizer(learning_rate)
 train_op = optimizer.minimize(loss_op)
 
@@ -44,6 +46,7 @@ with tf.Session() as sess:
     eval_losses  = []
     for epoch in range(epochs):
         x_train = Data_handler.get_batch(data_train, batch_size)
+        
         _, loss= sess.run([train_op, loss_op], feed_dict={X:x_train})
         #print(x_train[1])
         losses.append(loss)
