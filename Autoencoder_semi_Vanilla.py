@@ -27,7 +27,7 @@ target_layer = dense_layer(layer_in, n_target_layer)
 #hidden_2 = dense_layer(target_layer, n_hidden)
 layer_out = dense_layer(target_layer, n_output)
 
-loss_op= tf.reduce_mean(tf.square(layer_out - X))
+loss_op= tf.reduce_mean(tf.matmul( 3 , tf.square(layer_out - X)))
 optimizer = tf.train.AdamOptimizer(learning_rate)
 train_op = optimizer.minimize(loss_op)
 
