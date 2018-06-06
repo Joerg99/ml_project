@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import Data_handler
 import matplotlib.pyplot as plt
+import masking
 
 n_input = n_output = 218
 n_hidden = 210
@@ -11,6 +12,7 @@ n_target_layer = 200
 learning_rate = 0.01
 
 X = tf.placeholder(dtype=tf.float32, shape=[None, n_input])
+mask_placeholder = tf.placeholder(dtype=tf.float32, shape=[None, n_input])
 
 l2_reg = tf.contrib.layers.l2_regularizer(0.001)
 he_init = tf.contrib.layers.variance_scaling_initializer()
@@ -25,8 +27,11 @@ layer_out = dense_layer(target_layer, n_output)
 
 ########## tf.divide(tf.reduce_sum(tf.multiply(mask, tf.square(layer_out - X))), alle einsen in mask) 
 ########## mask = batch_size x n_input
-#loss_op= tf.reduce_mean(tf.square(layer_out - X))
-loss_op = tf.divide(tf.reduce_sum(tf.multiply(3.0, tf.square(layer_out - X))),2) # 3.0 = mask und 2 = anzahl von 1 in mask
+loss_op_eval= tf.reduce_mean(tf.square(layer_out - X))
+n_ones = n_input/2
+loss_op = tf.divide(tf.reduce_sum(tf.multiply(mask_placeholder, tf.square(layer_out - X))),n_ones) # 3.0 = mask und 2 = anzahl von 1 in mask
+
+
 optimizer = tf.train.AdamOptimizer(learning_rate)
 train_op = optimizer.minimize(loss_op)
 
@@ -39,7 +44,7 @@ data_train = all_data[:501]
 print(len(data_train))
 data_test = all_data[501:]
 x_test = Data_handler.get_batch(data_test, 100)
-epochs = 800
+epochs = 10
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     losses  = []
@@ -47,16 +52,17 @@ with tf.Session() as sess:
     for epoch in range(epochs):
         x_train = Data_handler.get_batch(data_train, batch_size)
         
-        _, loss= sess.run([train_op, loss_op], feed_dict={X:x_train})
+        mask, n_ones = masking.bin_mask(x_train)
+        _, loss= sess.run([train_op, loss_op], feed_dict={X:x_train, mask_placeholder:mask})
         #print(x_train[1])
         losses.append(loss)
-        eval_loss = sess.run(loss_op, feed_dict={X:x_test})
+        print(loss)
+        
+        ####### EVAL
+        eval_loss = sess.run(loss_op_eval, feed_dict={X:x_test})
         eval_losses.append(eval_loss)
         print(eval_loss, 'Epoch: ', epoch)
     results = layer_out.eval(feed_dict={X:x_test})
-        #if epoch % 100 == 0:
-        #    x_train = results
-    #low_dim_rep = target_layer.eval(feed_dict={X:x_test})
 
 
 for i in [1,4,6,8,15]:

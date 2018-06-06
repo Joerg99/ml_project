@@ -1,4 +1,23 @@
 import tensorflow as tf
+import numpy as np
+
+def bin_mask(lol):
+    bin_lol = []
+     
+    for i in range(len(lol)):
+        bin_l = [0] * len(lol[0])
+        for j in range(len(lol[0])):
+            #print(lol[i][j])
+            if lol[i][j] != 0:
+                bin_l[j] = 1
+ 
+        bin_lol.append(bin_l)
+    summ = np.sum(bin_lol)
+    return bin_lol, summ
+
+'''
+blah = bin_mask(y, batch_size, n_input)
+print(blah)
 
 #bin = [[0,1,0,1],[1,1,0,1],[1,0,0,1],[0,0,1,0],[0,0,0,1]]
 batch_size = 5
@@ -30,24 +49,7 @@ with tf.Session() as sess:
     
     
     
-'''
-def bin_mask(lol, batch_size, n_input):
-    bin_lol = []
-     
-    for i in range(batch_size):
-        bin_l = [0] * n_input
-        for j in range(n_input):
-            print(lol[i][j])
-            if lol[i][j] != 0:
-                bin_l[j] = 1
- 
-        bin_lol.append(bin_l)
-    return bin_lol
-
-blah = bin_mask(y, batch_size, n_input)
-print(blah)
-'''
 # for i in range(len(b)):
 #     for j in range(len(b[0])):
 #         print(( blah[i][j] * (b[i][j] - target[i][j])**2) / len(b[0]))
-
+'''
