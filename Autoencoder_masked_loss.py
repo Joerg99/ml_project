@@ -1,5 +1,4 @@
 import tensorflow as tf
-import numpy as np
 import Data_handler
 import matplotlib.pyplot as plt
 import masking
@@ -43,8 +42,8 @@ batch_size= 400
 data_train = all_data[:501]
 print(len(data_train))
 data_test = all_data[501:]
-x_test = Data_handler.get_batch(data_test, 100)
-epochs = 10
+x_test = Data_handler.get_batch(data_test, 150)
+epochs = 800
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     losses  = []
